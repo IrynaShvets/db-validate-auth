@@ -42,9 +42,11 @@ if (isset($_POST['submit'])) {
                         ':phone' => $phone,
                     ];
 
-                    $handle->execute($params);
-                    $success = 'User has been created successfully';
-                    $_SESSION['auth'] = $_POST['submit'];
+                    $handle->execute($params); $success = 'User has been created successfully';
+                    $_SESSION = $handle;
+                    header('location:post.php');
+                    exit();
+                   
                 } catch (PDOException $e) {
                     $errors[] = $e->getMessage();
                 }
