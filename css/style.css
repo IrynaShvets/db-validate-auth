@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap');
+
+*{
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    list-style: none;
+}
+
+.header {
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    background: rgba(82, 3, 19, 0.767);
+}
+
+.nav-menu {
+    display: flex;
+}
+
+.nav-link {
+    margin-right: 30px;
+    font-size: 24px;
+    color: #fbd0d9;
+}
+
+.nav-link:hover {
+    color: crimson;
+}
+
+.form-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    padding-bottom: 60px;
+    background: #eee;
+}
+
+.form-register{
+    padding: 20px;
+    border-radius: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 5px 10px rgba(0,0,0,.1);
+    background: #fff;
+    width: 500px;
+}
+
+.form-title{
+    font-size: 30px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.input,
+.select{
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 17px;
+    margin: 8px 0;
+    background: #eee;
+    border-radius: 5px;
+}
+
+.label {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.option{
+    background: #fff;
+}
+
+.form-btn{
+    width: 100%;
+    padding: 10px 0;
+    background: #fbd0d9;
+    color: crimson;
+    text-transform: capitalize;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.form-btn:hover{
+    background: crimson;
+    color: #fff;
+}
+
+.form-text{
+    margin-top: 10px;
+    font-size: 20px;
+    color: #333;
+}
+
+.form-link{
+    color: crimson;
+}
+
+.form-error-msg{
+    margin: 10px 0;
+    display: block;
+    background: crimson;
+    color: #fff;
+    border-radius: 5px;
+    font-size: 20px;
+    padding: 10px;
+}
+
+.error {
+    display: block;
+    color: crimson;
+}
+
+.error-star {
+    color: crimson;
+}
+
+.form-success-msg {
+    margin: 10px 0;
+    display: block;
+    background: rgb(67, 220, 20);
+    color: #fff;
+    border-radius: 5px;
+    font-size: 20px;
+    padding: 10px;
+}
+
+.container-user {
+    display: flex;
+    align-items: baseline;
+}
+
+.user-title {
+    color: #fbd0d9;
+}
+
+.user-text {
+    color: crimson;
+}
+
+.logout {
+    padding: 5px 10px;
+    margin-left: 30px;
+    background: #fbd0d9;
+    color: rgba(82, 3, 19, 0.767);
+}
+
+.logout:hover {
+    background: crimson;
+    color: #fbd0d9;
+}
