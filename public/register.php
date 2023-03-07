@@ -42,8 +42,11 @@ if (isset($_POST['submit'])) {
                         ':phone' => $phone,
                     ];
 
-                    $handle->execute($params); $success = 'User has been created successfully';
-                    $_SESSION = $handle;
+                    $handle->execute($params); 
+                    print_r( $handle->execute($params));
+                    
+                    $success = 'User has been created successfully';
+                    $_SESSION['auth']  = $handle;
                     header('location:post.php');
                     exit();
                    

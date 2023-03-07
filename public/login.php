@@ -17,7 +17,7 @@ if (isset($_POST['submit'])) {
 				$getRow = $handle->fetch(PDO::FETCH_ASSOC);
 				if (password_verify($password, $getRow['password'])) {
 					unset($getRow['password']);
-					$_SESSION = $getRow;
+					$_SESSION['auth'] = $getRow;
 					header('location:post.php');
 					exit();
 				} else {

@@ -2,9 +2,11 @@
 
 session_start();
 
-if (!$_SESSION['id']) {
+if (!$_SESSION['auth']) {
     header('location:login.php');
 }
+
+print_r($_SESSION['auth']);
 
 if (isset($_SESSION['title'])) {
     $title = $_SESSION['title'];
@@ -182,7 +184,7 @@ if (isset($_POST['submit'])) {
         </nav>
 
         <div class="container-user">
-            <p class="user-title">Welcome: <span class="user-text"><?php echo ucfirst($_SESSION['login']); ?></span></p>
+            <p class="user-title">Welcome: <span class="user-text"><?php  ?></span></p>
             <a class="logout" href="logout.php?logout=true">Logout</a>
         </div>
 

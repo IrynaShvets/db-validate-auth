@@ -2,8 +2,7 @@
 
 session_start();
 
-if(isset($_SESSION) ){
-    session_destroy();
+if(isset( $_SESSION['auth'])){
     header('location:post.php');
     exit();
     

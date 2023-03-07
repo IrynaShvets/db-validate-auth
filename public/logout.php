@@ -2,9 +2,8 @@
 
 session_start();
 
-if(isset($_SESSION)){
+if(isset($_SESSION['auth'] )){
     session_destroy();
     header('location:login.php');
     exit();
 }
-
