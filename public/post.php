@@ -173,7 +173,7 @@ if (isset($_POST['submit'])) {
                     <a href="dashboard.php" class="nav-link">Post</a>
                 </li>
                 <li>
-                    <a href="index.php" class="nav-link">Register</a>
+                    <a href="register.php" class="nav-link">Register</a>
                 </li>
                 <li>
                     <a href="login.php" class="nav-link">Login</a>
@@ -187,7 +187,6 @@ if (isset($_POST['submit'])) {
         </div>
 
     </header>
-
 
     <br>
     <div class="container">

@@ -56,7 +56,7 @@ if (isset($_POST['submit'])) {
 					<a href="post.php" class="nav-link">Post</a>
 				</li>
 				<li>
-					<a href="index.php" class="nav-link">Register</a>
+					<a href="register.php" class="nav-link">Register</a>
 				</li>
 				<li>
 					<a href="login.php" class="nav-link">Login</a>
@@ -81,7 +81,7 @@ if (isset($_POST['submit'])) {
 			<input class="input" type="text" name="email" placeholder="Enter Email" class="form-control">
 			<input class="input" type="password" name="password" placeholder="Enter Password" class="form-control">
 			<button type="submit" name="submit" class="form-btn">Submit</button>
-			<p class="form-text"> Back to <a href="index.php" class="form-link">Register</a></p>
+			<p class="form-text"> Back to <a href="register.php" class="form-link">Register</a></p>
 		</form>
 	</div>
 
