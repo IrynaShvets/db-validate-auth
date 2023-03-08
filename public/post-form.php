@@ -4,14 +4,9 @@ session_start();
 
 require_once('db.php');
 
-// print_r($_SESSION['auth']); 
-//  die();
-
 if (!isset($_SESSION['auth'])) {
     header('location:login.php');
 }
-
-//print_r($_SESSION['auth']['id']);
 
 $titleErr = $annotationErr = $contentErr = $emailErr = $viewsErr = $dateErr = $publishInIndexErr = $categoryErr = "";
 $valid = true;
@@ -125,14 +120,14 @@ if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'
         $errors[] = $e->getMessage();
     }
 
-    $_SESSION['title'] = $_POST['title'];
-    $_SESSION['annotation'] = $_POST['annotation'];
-    $_SESSION['content'] = $_POST['content'];
-    $_SESSION['email'] = $_POST['email'];
-    $_SESSION['views'] = $_POST['views'];
-    $_SESSION['date'] = $_POST['date'];
-    $_SESSION['publishInIndex'] = $_POST['publish_in_index'];
-    $_SESSION['category'] = $_POST['category'];
+    // $_SESSION['title'] = $_POST['title'];
+    // $_SESSION['annotation'] = $_POST['annotation'];
+    // $_SESSION['content'] = $_POST['content'];
+    // $_SESSION['email'] = $_POST['email'];
+    // $_SESSION['views'] = $_POST['views'];
+    // $_SESSION['date'] = $_POST['date'];
+    // $_SESSION['publishInIndex'] = $_POST['publish_in_index'];
+    // $_SESSION['category'] = $_POST['category'];
 }
 
 ?>
@@ -161,7 +156,10 @@ if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'
             <ul class="nav-menu">
 
                 <li>
-                    <a href="dashboard.php" class="nav-link">Post</a>
+                    <a href="post-form.php" class="nav-link">Post form</a>
+                </li>
+                <li>
+                    <a href="posts.php" class="nav-link">Posts</a>
                 </li>
                 <li>
                     <a href="register.php" class="nav-link">Register</a>

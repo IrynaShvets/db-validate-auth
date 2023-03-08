@@ -3,7 +3,7 @@
 session_start();
 
 if(isset( $_SESSION['auth'])){
-    header('location:post.php');
+    header('location:post-form.php');
    // exit();
     
 } else {

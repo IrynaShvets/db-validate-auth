@@ -159,3 +159,17 @@
     background: crimson;
     color: #fbd0d9;
 }
+
+.item {
+    width: 600px;
+    height: auto;
+    padding: 5px 20px;
+    background: crimson;
+    cursor: pointer;
+}
+
+.item:hover {
+    background: rgba(220, 20, 60, 0.877);
+    
+}
+

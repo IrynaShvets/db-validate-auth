@@ -18,7 +18,7 @@ if (isset($_POST['submit'])) {
 				if (password_verify($password, $getRow['password'])) {
 					unset($getRow['password']);
 					$_SESSION['auth'] = $getRow;
-					header('location:post.php');
+					header('location:post-form.php');
 					exit();
 				} else {
 					$errors[] = "Wrong Email or Password";
@@ -53,8 +53,11 @@ if (isset($_POST['submit'])) {
 			<ul class="nav-menu">
 
 				<li>
-					<a href="post.php" class="nav-link">Post</a>
-				</li>
+                    <a href="post-form.php" class="nav-link">Post form</a>
+                </li>
+                <li>
+                    <a href="posts.php" class="nav-link">Posts</a>
+                </li>
 				<li>
 					<a href="register.php" class="nav-link">Register</a>
 				</li>
