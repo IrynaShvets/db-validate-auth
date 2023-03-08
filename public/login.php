@@ -70,7 +70,7 @@ if (isset($_POST['submit'])) {
 	</header>
 
 	<div class="form-container">
-		
+		<form class="form-register" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 		<?php
 		if (isset($errors) && count($errors) > 0) {
 			foreach ($errors as $error_msg) {
@@ -78,8 +78,6 @@ if (isset($_POST['submit'])) {
 			}
 		}
 		?>
-
-		<form class="form-register" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 		<h1 class="form-title">Login now</h1>
 			<input class="input" type="text" name="email" placeholder="Enter Email" class="form-control">
 			<input class="input" type="password" name="password" placeholder="Enter Password" class="form-control">

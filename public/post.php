@@ -8,9 +8,14 @@ if (!isset($_SESSION['auth'])) {
     header('location:login.php');
 }
 
-$sql = "SELECT `posts`.`title`, `posts`.`annotation`, `posts`.`content`, `posts`.`email`, `posts`.`views`, `posts`.`date`, `users`.`login` 
- FROM `posts` JOIN `users` ON `users`.`id` = `posts`.`user_id`";
-$posts_with_users = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+echo $id;
+
+// $stmt = $pdo->query("SELECT * FROM `posts` WHERE `id`=$id");
+
+// print_r($stmt);
+}
 
 ?>
 
@@ -22,7 +27,7 @@ $posts_with_users = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/style.css">
-    <title>Posts</title>
+    <title>Post</title>
 </head>
 
 <body>
@@ -52,17 +57,9 @@ $posts_with_users = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
     </header>
 
-    <ol>
-        <?php foreach ($posts_with_users as $post) : ?>
-            <li class="item">
-                <a href="posts.php?id=" . $post['id']>
-                    <strong>User: </strong><?= $post['login']; ?>
-                    <strong>Title: </strong><?= $post['title']; ?>
-                    <strong>Annotation: </strong><?= $post['annotation']; ?>
-                </a>
-            </li>
-        <?php endforeach; ?>
-    </ol>
+    <a href="edit.php?id=">Edit</a>
+
+    <a href="delete.php?id=">Delete</a>
 
 </body>
 </html>
