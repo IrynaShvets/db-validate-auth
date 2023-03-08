@@ -2,62 +2,20 @@
 
 session_start();
 
-if (!$_SESSION['auth']) {
+require_once('db.php');
+
+// print_r($_SESSION['auth']); 
+//  die();
+
+if (!isset($_SESSION['auth'])) {
     header('location:login.php');
 }
 
-print_r($_SESSION['auth']);
-
-if (isset($_SESSION['title'])) {
-    $title = $_SESSION['title'];
-}
-if (isset($_SESSION['annotation'])) {
-    $annotation = $_SESSION['annotation'];
-}
-if (isset($_SESSION['content'])) {
-    $content = $_SESSION['content'];
-}
-if (isset($_SESSION['email'])) {
-    $email = $_SESSION['email'];
-}
-if (isset($_SESSION['views'])) {
-    $views = $_SESSION['views'];
-}
-if (isset($_SESSION['date'])) {
-    $date = $_SESSION['date'];
-}
-if (isset($_SESSION['publish_in_index'])) {
-    $publishInIndex = $_SESSION['publish_in_index'];
-}
-if (isset($_SESSION['category'])) {
-    $category = $_SESSION['category'];
-}
-
-if (isset($_POST['submit'])) {
-    $title = $_POST['title'];
-    $annotation = $_POST['annotation'];
-    $content = $_POST['content'];
-    $email = $_POST['email'];
-    $views = $_POST['views'];
-    $date = $_POST['date'];
-    $publishInIndex = $_POST['publish_in_index'];
-    $category = $_POST['category'];
-
-    $_SESSION['title'] = $_POST['title'];
-    $_SESSION['annotation'] = $_POST['annotation'];
-    $_SESSION['content'] = $_POST['content'];
-    $_SESSION['email'] = $_POST['email'];
-    $_SESSION['views'] = $_POST['views'];
-    $_SESSION['date'] = $_POST['date'];
-    $_SESSION['publishInIndex'] = $_POST['publish_in_index'];
-    $_SESSION['category'] = $_POST['category'];
-}
-
-
+//print_r($_SESSION['auth']['id']);
 
 $titleErr = $annotationErr = $contentErr = $emailErr = $viewsErr = $dateErr = $publishInIndexErr = $categoryErr = "";
-$title = $annotation = $content = $email = $views = $date = $publishInIndex = $category = "";
 $valid = true;
+
 if (isset($_POST['submit'])) {
 
     if (empty($_POST['title'])) {
@@ -111,7 +69,7 @@ if (isset($_POST['submit'])) {
     }
 
     if (isset($_POST["date"])) {
-       
+        $valid = false;
         $date1 = new DateTime("now");
         $date2 = new DateTime($_POST["date"]);
         $diff = $date1 < $date2;
@@ -124,26 +82,57 @@ if (isset($_POST['submit'])) {
         $valid = false;
         $publishInIndexErr = "Поле публікувати на головній має бути обов'язковим";
     }
+}
 
-    if ($valid === true && isset($_POST['submit'])) {
-        $title = $_POST["title"] ?  $_POST["title"] : '';
-        $annotation = $_POST['annotation'] ?  $_POST["annotation"] : '';
-        $content = $_POST['content'] ? $_POST["content"] : '';
-        $email = $_POST['email'] ? $_POST["email"] : '';
-        $views = $_POST['views'] ? $_POST["views"] : '';
-        $date = $_POST['date'] ? $_POST["date"] : '';
-        $publishInIndex = $_POST['publish_in_index'] ? $_POST["publish_in_index"] : '';
-        $category = $_POST['category'] ? $_POST["category"] : '';
+if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'])) {
 
-        echo $title . '<br>';
-        echo $annotation . '<br>';
-        echo $content . '<br>';
-        echo $email . '<br>';
-        echo $views . '<br>';
-        echo $date . '<br>';
-        echo $publishInIndex . '<br>';
-        echo $category . '<br>';
+    try {
+
+        $stmt = $pdo->prepare("INSERT INTO `posts` (`title`, `annotation`, `content`, `email`, views, `date`, `publish_in_index`, `category`, `user_id`) 
+    VALUES (:stu_title, :stu_annotation, :stu_content, :stu_email, :stu_views, :stu_date, :stu_publish_in_index, :stu_category, :stu_user_id)");
+        $stmt->bindParam(':stu_title', $stu_title);
+        $stmt->bindParam(':stu_annotation', $stu_annotation);
+        $stmt->bindParam(':stu_content', $stu_content);
+        $stmt->bindParam(':stu_email', $stu_email);
+        $stmt->bindParam(':stu_views', $stu_views);
+        $stmt->bindParam(':stu_date', $stu_date);
+        $stmt->bindParam(':stu_publish_in_index', $stu_publish_in_index);
+        $stmt->bindParam(':stu_category', $stu_category);
+        $stmt->bindParam(':stu_user_id', $stu_user_id);
+
+        $sql = $pdo->query("SELECT `title` FROM `posts` WHERE `title` = '{$_POST['title']}'")->fetchAll(PDO::FETCH_ASSOC);
+
+        if (isset($sql[0])) {
+            $errors[] = "Title already exists";
+        } else {
+
+            $stu_title = $_POST['title'];
+            $stu_annotation = $_POST['annotation'];
+            $stu_content = $_POST['content'];
+            $stu_email = $_POST['email'];
+            $stu_views = $_POST['views'];
+            $stu_date = $_POST['date'];
+            $stu_publish_in_index = $_POST['publish_in_index'];
+            $stu_category = $_POST['category'];
+            $stu_user_id = $_SESSION['auth']['id'];
+
+            $valid = true;
+
+            $stmt->execute();
+            $success = "New posts created successfully";
+        }
+    } catch (PDOException $e) {
+        $errors[] = $e->getMessage();
     }
+
+    $_SESSION['title'] = $_POST['title'];
+    $_SESSION['annotation'] = $_POST['annotation'];
+    $_SESSION['content'] = $_POST['content'];
+    $_SESSION['email'] = $_POST['email'];
+    $_SESSION['views'] = $_POST['views'];
+    $_SESSION['date'] = $_POST['date'];
+    $_SESSION['publishInIndex'] = $_POST['publish_in_index'];
+    $_SESSION['category'] = $_POST['category'];
 }
 
 ?>
@@ -184,13 +173,24 @@ if (isset($_POST['submit'])) {
         </nav>
 
         <div class="container-user">
-            <p class="user-title">Welcome: <span class="user-text"><?php  ?></span></p>
+            <p class="user-title">Welcome: <span class="user-text"><?php echo $_SESSION['auth']['login']; ?></span></p>
             <a class="logout" href="logout.php?logout=true">Logout</a>
         </div>
 
     </header>
 
-    <br>
+    <?php
+    if (isset($errors) && count($errors) > 0) {
+        foreach ($errors as $error_msg) {
+            echo '<div class="form-error-msg">' . $error_msg . '</div>';
+        }
+    }
+
+    if (isset($success)) {
+        echo '<div class="form-success-msg">' . $success . '</div>';
+    }
+    ?>
+
     <div class="container">
 
         <div class="row">

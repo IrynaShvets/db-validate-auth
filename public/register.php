@@ -7,7 +7,16 @@ $loginErr = $emailErr = $passwordErr = $cpasswordErr = $cityErr = $sexErr = $pho
 
 if (isset($_POST['submit'])) {
 
-    if (!empty($_POST['login']) && !empty($_POST['email']) && !empty($_POST['city']) && !empty($_POST['phone']) && !empty($_POST['sex']) && !empty($_POST['password']) && !empty($_POST['cpassword'])) {
+    if (!empty($_POST['login']) && 
+    !empty($_POST['email']) && 
+    !empty($_POST['city']) && 
+    !empty($_POST['phone']) && 
+    !empty($_POST['sex']) && 
+    !empty($_POST['password']) && 
+    !empty($_POST['cpassword']) && 
+    $_POST['password'] === $_POST['cpassword']) 
+{
+
         $login = trim($_POST['login']);
         $email = trim($_POST['email']);
         $city = trim($_POST['city']);
@@ -20,7 +29,7 @@ if (isset($_POST['submit'])) {
         $hashPassword = password_hash($password, PASSWORD_BCRYPT, $options);
         $date = date('Y-m-d H:i:s');
 
-        if (filter_var($email, FILTER_VALIDATE_EMAIL) && $password === $cpassword) {
+        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $sql = 'SELECT * FROM users WHERE email = :email';
             $stmt = $pdo->prepare($sql);
             $p = ['email' => $email];
@@ -42,13 +51,12 @@ if (isset($_POST['submit'])) {
                         ':phone' => $phone,
                     ];
 
-                    $handle->execute($params); 
-                    print_r( $handle->execute($params));
-                    
-                    $success = 'User has been created successfully';
-                    $_SESSION['auth']  = $handle;
-                    header('location:post.php');
-                    exit();
+                    $getRow = $handle->execute($params); 
+                    $success = 'User has been created successfully'; 
+
+                    //$getRow = $handle->fetch(PDO::FETCH_ASSOC);
+                    $_SESSION['auth'] = $getRow;
+                    header('location: index.php');
                    
                 } catch (PDOException $e) {
                     $errors[] = $e->getMessage();
@@ -63,10 +71,6 @@ if (isset($_POST['submit'])) {
                 $emailErr = 'Email address already registered';
             }
         } else {
-
-            if ($password !== $cpassword) {
-                $cpasswordErr = "Passwords did not match";
-            }
             $emailErr = "Email address is not valid";
         }
     } else {
@@ -112,6 +116,12 @@ if (isset($_POST['submit'])) {
         } else {
             $valConfirmPassword = $_POST['cpassword'];
         }
+
+        if ($_POST['password'] !== $_POST['cpassword']) {
+            $cpasswordErr = "Passwords did not match";
+        } else {
+            $valConfirmPassword = $_POST['cpassword'];
+        }
     }
 }
 
@@ -146,7 +156,6 @@ if (isset($_POST['submit'])) {
         </nav>
 
     </header>
-
 
     <div class="form-container">
 
