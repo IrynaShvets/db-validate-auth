@@ -52,11 +52,29 @@ if (isset($_POST['submit'])) {
                     ];
 
                     $getRow = $handle->execute($params); 
-                    $success = 'User has been created successfully'; 
 
-                    //$getRow = $handle->fetch(PDO::FETCH_ASSOC);
-                    $_SESSION['auth'] = $getRow;
-                    header('location: index.php');
+
+                    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        $sql = "SELECT * FROM users WHERE email = :email";
+                        $handle = $pdo->prepare($sql);
+                        $params = ['email' => $email];
+                        $handle->execute($params);
+                        if ($handle->rowCount() > 0) {
+                            $getRow = $handle->fetch(PDO::FETCH_ASSOC);
+                            if (password_verify($password, $getRow['password'])) {
+                                unset($getRow['password']);
+                                $_SESSION['auth'] = $getRow;
+                                header('location:post.php');
+                                exit();
+                            } else {
+                                $errors[] = "Wrong Email or Password";
+                            }
+                        } else {
+                            $errors[] = "Wrong Email or Password";
+                        }
+                    } else {
+                        $errors[] = "Email address is not valid";
+                    }
                    
                 } catch (PDOException $e) {
                     $errors[] = $e->getMessage();
