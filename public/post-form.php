@@ -63,7 +63,7 @@ if (isset($_POST['submit'])) {
         }
     }
 
-    if (empty($_POST['date'])) {
+    if (isset($_POST['date'])) {
         $valid = false;
         $date1 = new DateTime("now");
         $date2 = new DateTime($_POST["date"]);
@@ -78,10 +78,13 @@ if (isset($_POST['submit'])) {
         $publishInIndexErr = "Поле публікувати на головній має бути обов'язковим";
     }
 
-    if (trim($_POST['category']) === "") {
+    if (isset($_POST['category'])) {
         $valid = false;
-        $categoryErr = "Оберіть, будь ласка, категорію";
-    } 
+        $number = $_POST["category"];
+        if ((!is_numeric($number)) && ($number < 0) && ($number > 4)) {
+            $categoryErr = "Оберіть, будь ласка, категорію";
+        } 
+}
 }
 
 if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'])) {
@@ -124,15 +127,6 @@ if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'
     } catch (PDOException $e) {
         $errors[] = $e->getMessage();
     }
-
-    // $_SESSION['title'] = $_POST['title'];
-    // $_SESSION['annotation'] = $_POST['annotation'];
-    // $_SESSION['content'] = $_POST['content'];
-    // $_SESSION['email'] = $_POST['email'];
-    // $_SESSION['views'] = $_POST['views'];
-    // $_SESSION['date'] = $_POST['date'];
-    // $_SESSION['publishInIndex'] = $_POST['publish_in_index'];
-    // $_SESSION['category'] = $_POST['category'];
 }
 
 ?>
@@ -293,8 +287,8 @@ if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'
                     <label for="category" class="col-md-2 col-form-label">Публичная новость</label>
                     <div class="col-md-10">
                         <select id="category" class="form-control" name="category">
-                        <option value="" selected>Оберіть категорію</option>
-                            <option value="1">Спорт</option>
+
+                            <option value="1" selected>Спорт</option>
                             <option value="2">Культура</option>
                             <option value="3">Политика</option>
                         </select>
@@ -319,6 +313,6 @@ if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'
             </form>
         </div>
     </div>
-</body>
 
+</body>
 </html>

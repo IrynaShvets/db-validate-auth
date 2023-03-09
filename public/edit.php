@@ -14,61 +14,60 @@ $valid = true;
 if (isset($_POST['update'])) {
 
     $id = $_POST['id'];
-    Print_r($id);
 
     if (empty($_POST['title'])) {
-
+        
         $titleErr = "Поле заголовок не повинно бути порожнім";
     } else {
         $title = $_POST["title"];
         if (strlen($title) < 3) {
-
+            
             $titleErr = "Поле заголовок повинно мати не менше трьох символів";
         }
         if (strlen($title) > 255) {
-
+            
             $titleErr = "Поле заголовок повинно мати не більше ніж 255 символів";
         }
     }
-    // Print_r($_POST['title']);
 
     if (isset($_POST["annotation"])) {
+        
         $annotation = $_POST["annotation"];
         if (strlen($annotation) > 500) {
-
             $annotationErr = "Поле анотація не повинне перевищувати 500 символів";
         }
     }
 
     if (isset($_POST["content"])) {
+        
         $content = $_POST["content"];
         if (strlen($content) > 30000) {
-
             $contentErr = "Поле контенту не повинно перевищувати 30 000 символів";
         }
     }
 
     if (empty($_POST["email"])) {
-
+        
         $emailErr = "Поле email не повинно бути порожнім";
     } else {
         $email = $_POST["email"];
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-
+            
             $emailErr = "Поле email має бути валідним email";
         }
     }
 
     if (isset($_POST["views"])) {
+
         $views = $_POST["views"];
         if (!filter_var($views, FILTER_VALIDATE_INT, ["options" => ["min_range" => 0, "max_range" => 2147483647]]) !== false) {
-
+            
             $viewsErr = "Кількість переглядів має бути числом, не повинно бути негативним і в межах розміру UNSIGNED INT";
         }
     }
 
     if (isset($_POST["date"])) {
-
+        
         $date1 = new DateTime("now");
         $date2 = new DateTime($_POST["date"]);
         $diff = $date1 < $date2;
@@ -78,51 +77,48 @@ if (isset($_POST['update'])) {
     }
 
     if (empty($_POST["publish_in_index"])) {
-
+        
         $publishInIndexErr = "Поле публікувати на головній має бути обов'язковим";
     }
 
-    // $title = $_POST['title'];
-    //     $annotation = $_POST['annotation'];
-    //     $content = $_POST['content'];
-    //     $email = $_POST['email'];
-    //     $views = $_POST['views'];
-    //     $date = $_POST['date'];
-    //     $publish_in_index = $_POST['publish_in_index'];
-    //     $category = $_POST['category'];
-    //     $user_id = $_SESSION['auth']['id'];
+    if (isset($_POST['category'])) {
+        
+        $number = $_POST["category"];
+        if ((!is_numeric($number)) && ($number < 0) && ($number > 4)) {
+            $categoryErr = "Оберіть, будь ласка, категорію";
+        } 
+    }
+
+        $title = $_POST['title'];
+        $annotation = $_POST['annotation'];
+        $content = $_POST['content'];
+        $email = $_POST['email'];
+        $views = $_POST['views'];
+        $date = $_POST['date'];
+        $publish_in_index = $_POST['publish_in_index'];
+        $category = $_POST['category'];
+        $user_id = $_SESSION['auth']['id'];
 
     try {
 
-        $stmt = $pdo->prepare("UPDATE `posts` SET `title`=:title, `annotation`=:annotation, `content`=:content, `email`=:email, views=:views, `date`=':date', `publish_in_index`=:publish_in_index, `category`=:category, `user_id`=:user_id WHERE `id`=:id");
+        $stmt = $pdo->prepare("UPDATE `posts` SET `id`=:id, `title`=:title, `annotation`=:annotation, `content`=:content, `views`=:views, `date`=:date, `email`=:email, `publish_in_index`=:publish_in_index, `category`=:category, `user_id`=:user_id WHERE `id`=:id");
+        $stmt->bindParam(':id', $id);
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':annotation', $annotation);
         $stmt->bindParam(':content', $content);
-        $stmt->bindParam(':email', $email);
         $stmt->bindParam(':views', $views);
         $stmt->bindParam(':date', $date);
+        $stmt->bindParam(':email', $email);
         $stmt->bindParam(':publish_in_index', $publish_in_index);
         $stmt->bindParam(':category', $category);
         $stmt->bindParam(':user_id', $user_id);
-        $stmt->bindParam(':id', $id);
-
-        //    $title = $_POST['title'];
-        //     $annotation = $_POST['annotation'];
-        //     $content = $_POST['content'];
-        //     $email = $_POST['email'];
-        //     $views = $_POST['views'];
-        //     $date = $_POST['date'];
-        //     $publish_in_index = $_POST['publish_in_index'];
-        //     $category = $_POST['category'];
-        //     $user_id = $_SESSION['auth']['id'];
 
         $stmt->execute();
-        $g = $stmt->debugDumpParams();
-        print_r($g);
-        Print_r($title);
+       
         $success = "Post updated successfully";
-        // header("Location: posts.php");
-        // exit();
+        header("Location: posts.php");
+        exit();
+
 
     } catch (PDOException $e) {
         $errors[] = $e->getMessage();
@@ -299,10 +295,10 @@ if (isset($_GET['id'])) {
                     <label for="category" class="col-md-2 col-form-label">Публичная новость</label>
                     <div class="col-md-10">
                         <select id="category" class="form-control" name="category">
-                            <option value="" selected>Оберіть категорію</option>
-                            <option value="<?php echo $stmt[0]['category'] ?? $stmt[0]['category']; ?>">Спорт</option>
-                            <option value="<?php echo $stmt[0]['category']  ?? $stmt[0]['category']; ?>">Культура</option>
-                            <option value="<?php echo $stmt[0]['category']  ?? $stmt[0]['category']; ?>">Политика</option>
+                            
+                            <option value="1" selected>Спорт</option>
+                            <option value="2">Культура</option>
+                            <option value="3">Политика</option>
                         </select>
                         <div class="invalid-feedback">
                         </div>
@@ -312,8 +308,6 @@ if (isset($_GET['id'])) {
 
                 <div class="form-group row">
                     <div class="col-md-9">
-                        <!-- <button type="submit" name="update" class="btn btn-primary">Оновити пост</button> -->
-
                         <input type="hidden" name="id" value="<?= $stmt[0]['id'] ?>">
                         <input type="submit" name="update" class="btn btn-primary" value="Edit">
                     </div>

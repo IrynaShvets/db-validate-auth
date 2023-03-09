@@ -13,8 +13,7 @@ if (isset($_POST['submit'])) {
     !empty($_POST['phone']) && 
     !empty($_POST['sex']) && 
     !empty($_POST['password']) && 
-    !empty($_POST['cpassword']) && 
-   
+    !empty($_POST['cpassword']) &&    
     $_POST['password'] === $_POST['cpassword']) 
 {
 
@@ -52,8 +51,14 @@ if (isset($_POST['submit'])) {
                         ':phone' => $phone,
                     ];
 
-                    $getRow = $handle->execute($params); 
+                    $sql = $pdo->query("SELECT `login` FROM `users` WHERE `login` = '{$_POST['login']}'")->fetchAll(PDO::FETCH_ASSOC);
 
+                    if (isset($sql[0])) {
+                        $errors[] = "Login already exists";
+                    } else {
+                    $getRow = $handle->execute($params); 
+                    }
+                    
                     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                         $sql = "SELECT * FROM users WHERE email = :email";
                         $handle = $pdo->prepare($sql);
@@ -124,7 +129,7 @@ if (isset($_POST['submit'])) {
         }
 
         if (empty($_POST['password'])) {
-            $passwordErr = 'Password is required or must not be less than 6 characters';
+            $passwordErr = 'Password is required';
         } else {
             $valPassword = $_POST['password'];
         }
