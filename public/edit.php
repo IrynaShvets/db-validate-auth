@@ -13,25 +13,29 @@ $valid = true;
 
 if (isset($_POST['update'])) {
 
+    $id = $_POST['id'];
+    Print_r($id);
+
     if (empty($_POST['title'])) {
-        $valid = false;
+
         $titleErr = "Поле заголовок не повинно бути порожнім";
     } else {
         $title = $_POST["title"];
         if (strlen($title) < 3) {
-            $valid = false;
+
             $titleErr = "Поле заголовок повинно мати не менше трьох символів";
         }
         if (strlen($title) > 255) {
-            $valid = false;
+
             $titleErr = "Поле заголовок повинно мати не більше ніж 255 символів";
         }
     }
+    // Print_r($_POST['title']);
 
     if (isset($_POST["annotation"])) {
         $annotation = $_POST["annotation"];
         if (strlen($annotation) > 500) {
-            $valid = false;
+
             $annotationErr = "Поле анотація не повинне перевищувати 500 символів";
         }
     }
@@ -39,18 +43,18 @@ if (isset($_POST['update'])) {
     if (isset($_POST["content"])) {
         $content = $_POST["content"];
         if (strlen($content) > 30000) {
-            $valid = false;
+
             $contentErr = "Поле контенту не повинно перевищувати 30 000 символів";
         }
     }
 
     if (empty($_POST["email"])) {
-        $valid = false;
+
         $emailErr = "Поле email не повинно бути порожнім";
     } else {
         $email = $_POST["email"];
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $valid = false;
+
             $emailErr = "Поле email має бути валідним email";
         }
     }
@@ -58,13 +62,13 @@ if (isset($_POST['update'])) {
     if (isset($_POST["views"])) {
         $views = $_POST["views"];
         if (!filter_var($views, FILTER_VALIDATE_INT, ["options" => ["min_range" => 0, "max_range" => 2147483647]]) !== false) {
-            $valid = false;
+
             $viewsErr = "Кількість переглядів має бути числом, не повинно бути негативним і в межах розміру UNSIGNED INT";
         }
     }
 
     if (isset($_POST["date"])) {
-        $valid = false;
+
         $date1 = new DateTime("now");
         $date2 = new DateTime($_POST["date"]);
         $diff = $date1 < $date2;
@@ -74,15 +78,23 @@ if (isset($_POST['update'])) {
     }
 
     if (empty($_POST["publish_in_index"])) {
-        $valid = false;
+
         $publishInIndexErr = "Поле публікувати на головній має бути обов'язковим";
     }
 
-    if ($valid === true) {
-       
-        try {
+    // $title = $_POST['title'];
+    //     $annotation = $_POST['annotation'];
+    //     $content = $_POST['content'];
+    //     $email = $_POST['email'];
+    //     $views = $_POST['views'];
+    //     $date = $_POST['date'];
+    //     $publish_in_index = $_POST['publish_in_index'];
+    //     $category = $_POST['category'];
+    //     $user_id = $_SESSION['auth']['id'];
 
-        $stmt = $pdo->prepare("UPDATE `posts` SET `title`=:title, `annotation`=:annotation, `content`=:content, `email`=:email, views=:views, `date`=':date', `publish_in_index`=:publish_in_index, `category`=:category, `user_id`=:user_id, `id`=:id WHERE `id`=:id");
+    try {
+
+        $stmt = $pdo->prepare("UPDATE `posts` SET `title`=:title, `annotation`=:annotation, `content`=:content, `email`=:email, views=:views, `date`=':date', `publish_in_index`=:publish_in_index, `category`=:category, `user_id`=:user_id WHERE `id`=:id");
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':annotation', $annotation);
         $stmt->bindParam(':content', $content);
@@ -94,27 +106,28 @@ if (isset($_POST['update'])) {
         $stmt->bindParam(':user_id', $user_id);
         $stmt->bindParam(':id', $id);
 
+        //    $title = $_POST['title'];
+        //     $annotation = $_POST['annotation'];
+        //     $content = $_POST['content'];
+        //     $email = $_POST['email'];
+        //     $views = $_POST['views'];
+        //     $date = $_POST['date'];
+        //     $publish_in_index = $_POST['publish_in_index'];
+        //     $category = $_POST['category'];
+        //     $user_id = $_SESSION['auth']['id'];
 
-            $stmt->execute();
+        $stmt->execute();
+        $g = $stmt->debugDumpParams();
+        print_r($g);
+        Print_r($title);
+        $success = "Post updated successfully";
+        // header("Location: posts.php");
+        // exit();
 
-            $title = $_POST['title'];
-        $annotation = $_POST['annotation'];
-        $content = $_POST['content'];
-        $email = $_POST['email'];
-        $views = $_POST['views'];
-        $date = $_POST['date'];
-        $publish_in_index = $_POST['publish_in_index'];
-        $category = $_POST['category'];
-        $user_id = $_SESSION['auth']['id'];
-        $id = $_POST['id'];
-            // $success = "Post updated successfully";
-            //header("Location: posts.php");
-        
     } catch (PDOException $e) {
         $errors[] = $e->getMessage();
     }
-    }
-} 
+}
 
 ?>
 
@@ -123,7 +136,9 @@ if (isset($_POST['update'])) {
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
     $stmt = $pdo->query("SELECT * FROM `posts` WHERE `id`=$id")->fetchAll(PDO::FETCH_ASSOC);
-    
+} else {
+    header('location:posts.php');
+    exit();
 }
 
 ?>
@@ -298,9 +313,9 @@ if (isset($_GET['id'])) {
                 <div class="form-group row">
                     <div class="col-md-9">
                         <!-- <button type="submit" name="update" class="btn btn-primary">Оновити пост</button> -->
-                        
-                        <input type="hidden" value="<?=$stmt[0]['id']?>">
-                        <input type="submit" name="update" class="btn btn-primary" value="Update">
+
+                        <input type="hidden" name="id" value="<?= $stmt[0]['id'] ?>">
+                        <input type="submit" name="update" class="btn btn-primary" value="Edit">
                     </div>
                     <div class="col-md-3">
                         <?php if ($valid === true && isset($_POST['update'])) { ?>
