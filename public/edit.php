@@ -77,9 +77,10 @@ if (isset($_POST['update'])) {
         $valid = false;
         $publishInIndexErr = "Поле публікувати на головній має бути обов'язковим";
     }
-} else {
 
-    try {
+    if ($valid === true) {
+       
+        try {
 
         $stmt = $pdo->prepare("UPDATE `posts` SET `title`=:title, `annotation`=:annotation, `content`=:content, `email`=:email, views=:views, `date`=':date', `publish_in_index`=:publish_in_index, `category`=:category, `user_id`=:user_id, `id`=:id WHERE `id`=:id");
         $stmt->bindParam(':title', $title);
@@ -93,16 +94,27 @@ if (isset($_POST['update'])) {
         $stmt->bindParam(':user_id', $user_id);
         $stmt->bindParam(':id', $id);
 
-        if ($stmt) {
-            $valid = true;
+
             $stmt->execute();
+
+            $title = $_POST['title'];
+        $annotation = $_POST['annotation'];
+        $content = $_POST['content'];
+        $email = $_POST['email'];
+        $views = $_POST['views'];
+        $date = $_POST['date'];
+        $publish_in_index = $_POST['publish_in_index'];
+        $category = $_POST['category'];
+        $user_id = $_SESSION['auth']['id'];
+        $id = $_POST['id'];
             // $success = "Post updated successfully";
             //header("Location: posts.php");
-        }
+        
     } catch (PDOException $e) {
         $errors[] = $e->getMessage();
     }
-}
+    }
+} 
 
 ?>
 
@@ -111,6 +123,7 @@ if (isset($_POST['update'])) {
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
     $stmt = $pdo->query("SELECT * FROM `posts` WHERE `id`=$id")->fetchAll(PDO::FETCH_ASSOC);
+    
 }
 
 ?>
@@ -176,7 +189,7 @@ if (isset($_GET['id'])) {
 
         <div class="row">
             <p><span class="error">* required field</span></p>
-            <form style="width: 100%" method="post" action="edit.php">
+            <form style="width: 100%" method="post">
                 <div class="form-group row">
                     <label for="title" class="col-md-2 col-form-label">Заголовок</label>
                     <div class="col-md-10">
@@ -284,9 +297,10 @@ if (isset($_GET['id'])) {
 
                 <div class="form-group row">
                     <div class="col-md-9">
-                        <button type="submit" name="update" class="btn btn-primary">Оновити пост</button>
-
-                        <!-- <input type="submit" name="update" class="btn btn-primary" value="Update"> -->
+                        <!-- <button type="submit" name="update" class="btn btn-primary">Оновити пост</button> -->
+                        
+                        <input type="hidden" value="<?=$stmt[0]['id']?>">
+                        <input type="submit" name="update" class="btn btn-primary" value="Update">
                     </div>
                     <div class="col-md-3">
                         <?php if ($valid === true && isset($_POST['update'])) { ?>

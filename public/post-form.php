@@ -54,8 +54,8 @@ if (isset($_POST['submit'])) {
             $emailErr = "Поле email має бути валідним email";
         }
     }
-
-    if (isset($_POST["views"])) {
+    
+    if (empty($_POST["views"])) {
         $views = $_POST["views"];
         if (!filter_var($views, FILTER_VALIDATE_INT, ["options" => ["min_range" => 0, "max_range" => 2147483647]]) !== false) {
             $valid = false;
@@ -125,14 +125,16 @@ if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'
         $errors[] = $e->getMessage();
     }
 
-    // $_SESSION['title'] = $_POST['title'];
-    // $_SESSION['annotation'] = $_POST['annotation'];
-    // $_SESSION['content'] = $_POST['content'];
-    // $_SESSION['email'] = $_POST['email'];
-    // $_SESSION['views'] = $_POST['views'];
-    // $_SESSION['date'] = $_POST['date'];
-    // $_SESSION['publishInIndex'] = $_POST['publish_in_index'];
-    // $_SESSION['category'] = $_POST['category'];
+    $_SESSION['title'] = $_POST['title'];
+    $_SESSION['annotation'] = $_POST['annotation'];
+    $_SESSION['content'] = $_POST['content'];
+    $_SESSION['email'] = $_POST['email'];
+    $_SESSION['views'] = $_POST['views'];
+    $_SESSION['date'] = $_POST['date'];
+    $_SESSION['publishInIndex'] = $_POST['publish_in_index'];
+    $_SESSION['category'] = $_POST['category'];
+   
+    $_SESSION['id'] = $_POST['id'];
 }
 
 ?>
