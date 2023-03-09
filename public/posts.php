@@ -8,9 +8,9 @@ if (!isset($_SESSION['auth'])) {
     header('location:login.php');
 }
 
-$sql = "SELECT `posts`.`title`, `posts`.`annotation`, `posts`.`content`, `posts`.`email`, `posts`.`views`, `posts`.`date`, `users`.`login` 
+$sql = "SELECT `posts`.`title`, `posts`.`annotation`, `posts`.`content`, `posts`.`email`, `posts`.`id`, `posts`.`date`, `users`.`login` 
  FROM `posts` JOIN `users` ON `users`.`id` = `posts`.`user_id`";
-$posts_with_users = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+$result = $pdo->query($sql);
 
 ?>
 
@@ -52,17 +52,32 @@ $posts_with_users = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
     </header>
 
-    <ol>
-        <?php foreach ($posts_with_users as $post) : ?>
-            <li class="item">
-                <a href="posts.php?id=" . $post['id']>
-                    <strong>User: </strong><?= $post['login']; ?>
-                    <strong>Title: </strong><?= $post['title']; ?>
-                    <strong>Annotation: </strong><?= $post['annotation']; ?>
-                </a>
-            </li>
-        <?php endforeach; ?>
-    </ol>
+    <table width='80%' border=0>
 
+	<tr bgcolor='#CCCCCC'>
+		<td>Title</td>
+		<td>Annotation</td>
+        <td>Content</td>
+        <td>Date</td>
+		<td>Email</td>
+        <td>View</td>
+		<td>Update</td>
+        <td>Delete</td>
+	</tr>
+
+    <?php 	
+	while($row = $result->fetch(PDO::FETCH_ASSOC)) { 	
+		echo "<tr>";
+		echo "<td>".$row['title']."</td>";
+		echo "<td>".$row['annotation']."</td>";
+        echo "<td>".$row['content']."</td>";
+        echo "<td>".$row['date']."</td>";
+		echo "<td>".$row['email']."</td>";	
+        echo "<td><a href=\"post.php?id=$row[id]\">View</a></td>";
+		echo "<td><a href=\"edit.php?id=$row[id]\">Edit</a></td>"; 
+        echo "<td><a href=\"delete.php?id=$row[id]\" onClick=\"return confirm('Are you sure you want to delete?')\">Delete</a></td>";		
+	}
+	?>
+</table>
 </body>
 </html>

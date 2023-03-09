@@ -14,6 +14,7 @@ if (isset($_POST['submit'])) {
     !empty($_POST['sex']) && 
     !empty($_POST['password']) && 
     !empty($_POST['cpassword']) && 
+   
     $_POST['password'] === $_POST['cpassword']) 
 {
 
@@ -52,7 +53,6 @@ if (isset($_POST['submit'])) {
                     ];
 
                     $getRow = $handle->execute($params); 
-
 
                     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                         $sql = "SELECT * FROM users WHERE email = :email";
@@ -124,7 +124,7 @@ if (isset($_POST['submit'])) {
         }
 
         if (empty($_POST['password'])) {
-            $passwordErr = 'Password is required';
+            $passwordErr = 'Password is required or must not be less than 6 characters';
         } else {
             $valPassword = $_POST['password'];
         }

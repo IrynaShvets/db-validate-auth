@@ -11,7 +11,7 @@ if (!isset($_SESSION['auth'])) {
 $titleErr = $annotationErr = $contentErr = $emailErr = $viewsErr = $dateErr = $publishInIndexErr = $categoryErr = "";
 $valid = true;
 
-if (isset($_POST['submit'])) {
+if (isset($_POST['update'])) {
 
     if (empty($_POST['title'])) {
         $valid = false;
@@ -77,49 +77,40 @@ if (isset($_POST['submit'])) {
         $valid = false;
         $publishInIndexErr = "Поле публікувати на головній має бути обов'язковим";
     }
-}
-
-if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'])) {
+} else {
 
     try {
 
-        $stmt = $pdo->prepare("INSERT INTO `posts` (`title`, `annotation`, `content`, `email`, views, `date`, `publish_in_index`, `category`, `user_id`) 
-    VALUES (:stu_title, :stu_annotation, :stu_content, :stu_email, :stu_views, :stu_date, :stu_publish_in_index, :stu_category, :stu_user_id)");
-        $stmt->bindParam(':stu_title', $stu_title);
-        $stmt->bindParam(':stu_annotation', $stu_annotation);
-        $stmt->bindParam(':stu_content', $stu_content);
-        $stmt->bindParam(':stu_email', $stu_email);
-        $stmt->bindParam(':stu_views', $stu_views);
-        $stmt->bindParam(':stu_date', $stu_date);
-        $stmt->bindParam(':stu_publish_in_index', $stu_publish_in_index);
-        $stmt->bindParam(':stu_category', $stu_category);
-        $stmt->bindParam(':stu_user_id', $stu_user_id);
+        $stmt = $pdo->prepare("UPDATE `posts` SET `title`=:title, `annotation`=:annotation, `content`=:content, `email`=:email, views=:views, `date`=':date', `publish_in_index`=:publish_in_index, `category`=:category, `user_id`=:user_id, `id`=:id WHERE `id`=:id");
+        $stmt->bindParam(':title', $title);
+        $stmt->bindParam(':annotation', $annotation);
+        $stmt->bindParam(':content', $content);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':views', $views);
+        $stmt->bindParam(':date', $date);
+        $stmt->bindParam(':publish_in_index', $publish_in_index);
+        $stmt->bindParam(':category', $category);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->bindParam(':id', $id);
 
-        $sql = $pdo->query("SELECT `title` FROM `posts` WHERE `title` = '{$_POST['title']}'")->fetchAll(PDO::FETCH_ASSOC);
-
-        if (isset($sql[0])) {
-            $errors[] = "Title already exists";
-        } else {
-
-            $stu_title = $_POST['title'];
-            $stu_annotation = $_POST['annotation'];
-            $stu_content = $_POST['content'];
-            $stu_email = $_POST['email'];
-            $stu_views = $_POST['views'];
-            $stu_date = $_POST['date'];
-            $stu_publish_in_index = $_POST['publish_in_index'];
-            $stu_category = $_POST['category'];
-            $stu_user_id = $_SESSION['auth']['id'];
-
+        if ($stmt) {
             $valid = true;
-
             $stmt->execute();
-            $success = "New posts created successfully";
+            // $success = "Post updated successfully";
+            //header("Location: posts.php");
         }
     } catch (PDOException $e) {
         $errors[] = $e->getMessage();
     }
+}
 
+?>
+
+<?php
+
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+    $stmt = $pdo->query("SELECT * FROM `posts` WHERE `id`=$id")->fetchAll(PDO::FETCH_ASSOC);
 }
 
 ?>
@@ -185,11 +176,11 @@ if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'
 
         <div class="row">
             <p><span class="error">* required field</span></p>
-            <form style="width: 100%" method="post">
+            <form style="width: 100%" method="post" action="edit.php">
                 <div class="form-group row">
                     <label for="title" class="col-md-2 col-form-label">Заголовок</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" id="title" name="title" value="">
+                        <input type="text" class="form-control" id="title" name="title" value="<?php echo $stmt[0]['title']; ?>">
                         <div class="invalid-feedback">
 
                         </div>
@@ -200,7 +191,7 @@ if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'
                 <div class="form-group row">
                     <label for="annotation" class="col-md-2 col-form-label">Аннотация</label>
                     <div class="col-md-10">
-                        <textarea name="annotation" id="annotation" class="form-control" cols="30" rows="10"></textarea>
+                        <textarea name="annotation" id="annotation" class="form-control" cols="30" rows="10"><?php echo $stmt[0]['annotation']; ?></textarea>
                         <div class="invalid-feedback">
                         </div>
                         <span class="error"> <?php echo $annotationErr; ?></span>
@@ -210,7 +201,7 @@ if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'
                 <div class="form-group row">
                     <label for="content" class="col-md-2 col-form-label">Текст новости</label>
                     <div class="col-md-10">
-                        <textarea name="content" id="content" class="form-control" cols="30" rows="10"></textarea>
+                        <textarea name="content" id="content" class="form-control" cols="30" rows="10"><?php echo $stmt[0]['content']; ?></textarea>
                         <div class="invalid-feedback">
                         </div>
                         <span class="error"> <?php echo $contentErr; ?></span>
@@ -220,7 +211,7 @@ if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'
                 <div class="form-group row">
                     <label for="email" class="col-md-2 col-form-label">Email автора для связи</label>
                     <div class="col-md-10">
-                        <input type="email" class="form-control" id="email" name="email" value="">
+                        <input type="email" class="form-control" id="email" name="email" value="<?php echo $stmt[0]['email']; ?>">
                         <div class="invalid-feedback">
                         </div>
                         <span class="error">*<?php echo $emailErr; ?></span>
@@ -230,7 +221,7 @@ if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'
                 <div class="form-group row">
                     <label for="views" class="col-md-2 col-form-label">Кол-во просмотров</label>
                     <div class="col-md-10">
-                        <input type="number" class="form-control" id="views" name="views" value="">
+                        <input type="number" class="form-control" id="views" name="views" value="<?php echo $stmt[0]['views']; ?>">
                         <div class="invalid-feedback">
                         </div>
                         <span class="error"> <?php echo $viewsErr; ?></span>
@@ -240,7 +231,7 @@ if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'
                 <div class="form-group row">
                     <label for="date" class="col-md-2 col-form-label">Дата публикации</label>
                     <div class="col-md-10">
-                        <input type="date" class="form-control" id="date" name="date" value="">
+                        <input type="date" class="form-control" id="date" name="date" value="<?php echo $stmt[0]['date']; ?>">
                         <div class="invalid-feedback">
                         </div>
                         <span class="error"> <?php echo $dateErr; ?></span>
@@ -259,13 +250,13 @@ if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'
                     <label class="col-md-2 col-form-label">Публиковать на главной</label>
                     <div class="col-md-10">
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="publish_in_index" id="publish_in_index_yes" value="yes" checked>
+                            <input class="form-check-input" type="radio" name="publish_in_index" id="publish_in_index_yes" value="<?php echo $stmt[0]['publish_in_index']; ?>" checked>
                             <label class="form-check-label" for="publish_in_index_yes">
                                 Да
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="publish_in_index" id="publish_in_index_no" value="no">
+                            <input class="form-check-input" type="radio" name="publish_in_index" id="publish_in_index_no" value="<?php echo $stmt[0]['publish_in_index']; ?>">
                             <label class="form-check-label" for="publish_in_index_no">
                                 Нет
                             </label>
@@ -280,9 +271,10 @@ if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'
                     <label for="category" class="col-md-2 col-form-label">Публичная новость</label>
                     <div class="col-md-10">
                         <select id="category" class="form-control" name="category">
-                            <option value="1" selected>Спорт</option>
-                            <option value="2">Культура</option>
-                            <option value="3">Политика</option>
+                            <option value="" selected>Оберіть категорію</option>
+                            <option value="<?php echo $stmt[0]['category'] ?? $stmt[0]['category']; ?>">Спорт</option>
+                            <option value="<?php echo $stmt[0]['category']  ?? $stmt[0]['category']; ?>">Культура</option>
+                            <option value="<?php echo $stmt[0]['category']  ?? $stmt[0]['category']; ?>">Политика</option>
                         </select>
                         <div class="invalid-feedback">
                         </div>
@@ -292,10 +284,12 @@ if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'
 
                 <div class="form-group row">
                     <div class="col-md-9">
-                        <button type="submit" name="submit" class="btn btn-primary">Отправить</button>
+                        <button type="submit" name="update" class="btn btn-primary">Оновити пост</button>
+
+                        <!-- <input type="submit" name="update" class="btn btn-primary" value="Update"> -->
                     </div>
                     <div class="col-md-3">
-                        <?php if ($valid === true && isset($_POST['submit'])) { ?>
+                        <?php if ($valid === true && isset($_POST['update'])) { ?>
                             <div class="alert alert-success">
                                 Форма валидна
                             </div>

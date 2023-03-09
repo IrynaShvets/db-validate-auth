@@ -63,7 +63,7 @@ if (isset($_POST['submit'])) {
         }
     }
 
-    if (isset($_POST["date"])) {
+    if (empty($_POST['date'])) {
         $valid = false;
         $date1 = new DateTime("now");
         $date2 = new DateTime($_POST["date"]);
@@ -77,6 +77,11 @@ if (isset($_POST['submit'])) {
         $valid = false;
         $publishInIndexErr = "Поле публікувати на головній має бути обов'язковим";
     }
+
+    if (trim($_POST['category']) === "") {
+        $valid = false;
+        $categoryErr = "Оберіть, будь ласка, категорію";
+    } 
 }
 
 if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'])) {
@@ -288,7 +293,8 @@ if (isset($_POST['submit']) && isset($_SESSION['auth']) && !empty($_POST['views'
                     <label for="category" class="col-md-2 col-form-label">Публичная новость</label>
                     <div class="col-md-10">
                         <select id="category" class="form-control" name="category">
-                            <option value="1" selected>Спорт</option>
+                        <option value="" selected>Оберіть категорію</option>
+                            <option value="1">Спорт</option>
                             <option value="2">Культура</option>
                             <option value="3">Политика</option>
                         </select>

@@ -1,12 +1,18 @@
 <?php
 
-require('db.php');
+require_once('db.php');
 
-$id=$_GET['id'];
+$id = $_GET['id'];
 
-$pdo->prepare("DELETE FROM `posts` WHERE `id` = $id")->execute([$id]);
+$sql = "DELETE FROM `posts` WHERE id=:id";
+$query = $pdo->prepare($sql);
+$query->execute(array(':id' => $id));
 
-header("Location: posts.php"); 
-exit();
+
+    if ($query) {
+        header("Location: posts.php");
+    } else {
+        echo "Failed to delete post";
+    }
 
 ?>
